@@ -1,6 +1,7 @@
 const User = require("../models/user.module");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 // Register
 exports.register = async (req, res) => {
@@ -15,13 +16,67 @@ exports.register = async (req, res) => {
     const newUser = new User({ name, email, password: hashedPassword, isAdmin });
     await newUser.save();
 
-    res.status(201).json({ message: "User created successfully" });
+        // Generate email verification token
+    const emailToken = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+        const url = `http://localhost:5000/api/auth/verify/${emailToken}`;
+
+           // Send email using nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER, // your email
+        pass: process.env.EMAIL_PASS  // your app password
+      }
+    });
+
+    await transporter.sendMail({
+  from: process.env.EMAIL_USER,
+  to: email,
+  subject: "Verify your email",
+  html: `<p>Click this link to verify your email:</p><a href="${url}">${url}</a>`
+}).catch(err => {
+  console.error("Error sending email:", err);
+});
+
+
+    res.status(201).json({ message: "User registered. Please verify your email." });
+
+
+     
     console.log(newUser)
   } catch (err) {
-    res.status(500).json({ message: "Server error"  });
+    return res.status(500).json({ message: "Server error"  });
     console.log(err)
   }
 };
+
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const token = req.params.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) return res.status(400).json({ message: "Invalid token" });
+
+    user.isVerified = true;
+    await user.save();
+console.log(user)
+    return res.status(200).json({ message: "Email verified successfully" });
+  } catch (err) {
+    return res.status(400).json({ message: "Invalid or expired token" });
+  }
+};
+
+
+
+
+
 
 // Login
 exports.login = async (req, res) => {
