@@ -6,13 +6,20 @@ const connectDB = require("./Config/db.js");
 const authRoutes = require("./Routes/authRoute.js")
 const app = express();
 const PORT = process.env.PORT || 5000;
+const cookieParser = require("cookie-parser");
+
+
 
 // Connect DB
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5000", // your frontend origin
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 

@@ -67,7 +67,14 @@ exports.verifyEmail = async (req, res) => {
     user.isVerified = true;
     await user.save();
 console.log(user)
-    return res.status(200).json({ message: "Email verified successfully" });
+console.log(token)
+    return res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
+      }).
+    status(200).json({ message: "Email verified successfully" });
   } catch (err) {
     return res.status(400).json({ message: "Invalid or expired token" });
   }
@@ -95,7 +102,13 @@ exports.login = async (req, res) => {
       { expiresIn: "5d" }
     );
 
-    res.status(200).json({
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
+      }).
+    status(200).json({
       token,
       user: {
         id: user._id,
@@ -108,4 +121,15 @@ exports.login = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
+};
+
+
+// Logout
+exports.logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
 };
