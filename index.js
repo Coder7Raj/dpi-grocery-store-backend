@@ -6,6 +6,7 @@ const connectDB = require("./Config/db.js");
 const authRoutes = require("./Routes/authRoute.js")
 const productRoutes = require("./Routes/productRoute.js")
 const userRoute =require("./Routes/userRoutes.js")
+const updatProfile = require("./Routes/profileRoutes.js")
 const app = express();
 const PORT = process.env.PORT || 5000;
 const cookieParser = require("cookie-parser");
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/user", userRoute)
+app.use("/api/profile", updatProfile)
 
 // Sample route
 app.get("/", (req, res) => {
