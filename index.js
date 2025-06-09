@@ -11,7 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const cookieParser = require("cookie-parser");
 
-
+const fs = require("fs");
+const path = require("path");
 
 // Connect DB
 connectDB();
@@ -33,6 +34,17 @@ app.use("/api/profile", updatProfile)
 app.get("/", (req, res) => {
   res.send("API is running");
 });
+
+// Serve uploaded files statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+
+const uploadDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 // Start server
 app.listen(PORT, () => {
