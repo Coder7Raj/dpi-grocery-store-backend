@@ -3,17 +3,34 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
+async function generatePayId() {
+  const lastUser = await User.findOne().sort({ createdAt: -1 }); // Make sure createdAt exists
+
+  let nextId = 1001;
+
+  if (lastUser?.payId) {
+    const lastId = parseInt(lastUser.payId.split('-')[1]);
+    if (!isNaN(lastId)) {
+      nextId = lastId + 1;
+    }
+  }
+
+  return `PAY-${nextId}`;
+}
+
+
 // Register
 exports.register = async (req, res) => {
   try {
     const { name, email, password, isAdmin } = req.body;
+     const payId = await generatePayId();
 
     const existingUser = await User.findOne({email})
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ name, email, password: hashedPassword, isAdmin });
+    const newUser = new User({ name, email, password: hashedPassword, isAdmin , payId});
     await newUser.save();
 
         // Generate email verification token
