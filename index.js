@@ -7,6 +7,7 @@ const authRoutes = require("./Routes/authRoute.js")
 const productRoutes = require("./Routes/productRoute.js")
 const userRoute =require("./Routes/userRoutes.js")
 const updatProfile = require("./Routes/profileRoutes.js")
+const order = require("./Routes/orderRoute.js")
 const wallet = require("./Routes/walleRoute.js")
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +32,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/user", userRoute)
 app.use("/api/profile", updatProfile)
 app.use("/api/wallet", wallet)
+app.use("/api/order", order)
 
 // Sample route
 app.get("/", (req, res) => {

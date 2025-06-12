@@ -42,3 +42,14 @@ exports.getBalance = async (req, res) => {
 
   res.status(200).json({ balance: user.walletBalance });
 };
+
+
+// history
+exports.getHistory = async (req, res) => {
+  const { payId } = req.params;
+  const user = await User.findOne({ payId });
+
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  res.status(200).json({ transactions: user.transactions.reverse() });
+};

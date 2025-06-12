@@ -10,7 +10,19 @@ const userSchema = new mongoose.Schema({
   profileImage: { type: String, default: "" },
   payId: { type: String, unique: true },
   walletBalance: { type: Number, default: 500 },
-  transactions: [transactionSchema]
+  transactions: [transactionSchema],
+  coins: {
+  type: Number,
+  default: 0,
+},
+badges: [
+  {
+    name: String,
+    dateEarned: Date,
+    description: String,
+  }
+],
+
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

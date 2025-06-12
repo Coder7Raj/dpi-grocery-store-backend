@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllUsers, deleteUser, searchUsersByName} = require("../Config/user");
+const {getAllUsers, deleteUser, searchUsersByName, getuser} = require("../Config/user");
 
 // GET /api/admin/users
 router.get("/alluser", getAllUsers);
@@ -9,6 +9,9 @@ router.get("/alluser", getAllUsers);
 router.delete("/:id",  deleteUser);
 
 router.get('/search', searchUsersByName); 
+
+router.get('/getuser/:id', getuser); 
+
 
 
 
