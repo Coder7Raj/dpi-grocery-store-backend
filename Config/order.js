@@ -41,3 +41,37 @@ exports.placeOrder = async (req, res) => {
     res.status(500).json({ message: 'Order failed', error: error.message });
   }
 };
+
+
+// statu update by admin
+// controllers/orderController.js
+
+
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    console.log(orderId)
+    const { status } = req.body;
+
+    // Validate status value
+    const allowedStatuses = ['pending', 'processing', 'completed', 'cancelled'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+
+    // Find the order and update status
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.status(200).json({ message: 'Order status updated', order });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

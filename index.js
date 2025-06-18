@@ -22,7 +22,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend origin
+    origin: true, // your frontend origin
     credentials: true,
   })
 );

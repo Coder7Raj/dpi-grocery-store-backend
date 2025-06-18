@@ -107,9 +107,14 @@ exports.verifyEmail = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+       console.log("Login request:", req.body);
 
     const user = await User.findOne({ email });
+    console.log(user)
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    console.log("Entered password:", password);
+console.log("Stored (hashed) password:", user.password);
+
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
@@ -140,7 +145,7 @@ exports.login = async (req, res) => {
         },
       });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message  });
   }
 };
 
