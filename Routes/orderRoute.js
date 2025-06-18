@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { placeOrder, updateOrderStatus } = require('../Config/order');
+const { placeOrder, updateOrderStatus, getUserOrders, getPendingOrders } = require('../Config/order');
+const authMiddleware = require("../Config/middleware")
+const isAdmin = require("../Config/isAdmin")
 
-router.post('/place', placeOrder);
-router.put('/:orderId/status', updateOrderStatus);
+router.post('/place',authMiddleware, placeOrder);
+router.get('/myOrder',authMiddleware, getUserOrders);
+router.get('/pending',authMiddleware, getPendingOrders);
+router.put('/status/:orderId',authMiddleware, isAdmin, updateOrderStatus);
 
 module.exports = router;

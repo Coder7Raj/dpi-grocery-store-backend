@@ -18,12 +18,13 @@ const cartSchema = new mongoose.Schema({
         required: true,
         default: 1,
       },
-      price: {
-        type: Number,
-        required: true,
-      },
+      // price: {
+      //   type: Number,
+      //   required: true,
+      // },
       // Optional
       // variant: String,
     },
   ],
 }, { timestamps: true });
+module.exports = mongoose.model('Cart', cartSchema);

@@ -9,6 +9,7 @@ const userRoute = require("./Routes/userRoutes.js");
 const updatProfile = require("./Routes/profileRoutes.js");
 const order = require("./Routes/orderRoute.js");
 const wallet = require("./Routes/walleRoute.js");
+const cart = require("./Routes/cartRoute.js")
 const app = express();
 const PORT = process.env.PORT || 5000;
 const cookieParser = require("cookie-parser");
@@ -35,6 +36,7 @@ app.use("/api/user", userRoute);
 app.use("/api/profile", updatProfile);
 app.use("/api/wallet", wallet);
 app.use("/api/order", order);
+app.use("/api/cart", cart)
 
 // Sample route
 app.get("/", (req, res) => {
