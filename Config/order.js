@@ -34,6 +34,12 @@ exports.placeOrder = async (req, res) => {
     // Deduct balance
     user.walletBalance -= totalPrice;
     await user.save();
+    // Reward 1 coin for orders above ৳1000
+if (totalPrice >= 1000) {
+  user.coins += 1;
+  await user.save(); // save updated coins
+}
+
 
     // Create order with all cart items
     const newOrder = new Order({
