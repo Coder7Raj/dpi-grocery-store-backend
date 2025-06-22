@@ -10,7 +10,7 @@ exports.addCart = async (req, res) => {
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      cart = new Cart({ userId, items: [{ productId, quantity }] });
+      cart = new Cart({ userId, items: [{ productId }] });
     } else {
       const index = cart.items.findIndex(
         (item) => item.productId.toString() === productId
