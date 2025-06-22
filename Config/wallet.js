@@ -1,38 +1,38 @@
 const User = require("../models/user.module")
 // POST /api/wallet/transfer
-exports.transfer = async (req, res) => {
+// exports.transfer = async (req, res) => {
   
-  const { senderPayId, receiverPayId, amount, note } = req.body;
+//   const { senderPayId, receiverPayId, amount, note } = req.body;
 
-  const sender = await User.findOne({ payId: senderPayId });
-    const receiver = await User.findOne({ payId: receiverPayId });
+//   const sender = await User.findOne({ payId: senderPayId });
+//     const receiver = await User.findOne({ payId: receiverPayId });
 
-  if (!receiver) return res.status(404).json({ message: 'Receiver not found' });
-  if (sender.walletBalance < amount) return res.status(400).json({ message: 'Insufficient balance' });
+//   if (!receiver) return res.status(404).json({ message: 'Receiver not found' });
+//   if (sender.walletBalance < amount) return res.status(400).json({ message: 'Insufficient balance' });
 
-  // Deduct and update balances
-  sender.walletBalance -= amount;
-  receiver.walletBalance += amount;
+//   // Deduct and update balances
+//   sender.walletBalance -= amount;
+//   receiver.walletBalance += amount;
 
-  // Add transactions
-  const transaction = {
-    type: 'transfer',
-    amount,
-    date: new Date(),
-    from: sender.payId,
-    to: receiver.payId,
-    note,
-    status: 'success'
-  };
+//   // Add transactions
+//   const transaction = {
+//     type: 'transfer',
+//     amount,
+//     date: new Date(),
+//     from: sender.payId,
+//     to: receiver.payId,
+//     note,
+//     status: 'success'
+//   };
 
-  sender.transactions.push({ ...transaction, type: 'debit' });
-  receiver.transactions.push({ ...transaction, type: 'credit' });
+//   sender.transactions.push({ ...transaction, type: 'debit' });
+//   receiver.transactions.push({ ...transaction, type: 'credit' });
 
-  await sender.save();
-  await receiver.save();
+//   await sender.save();
+//   await receiver.save();
 
-  res.status(200).json({ message: 'Transfer successful' });
-};
+//   res.status(200).json({ message: 'Transfer successful' });
+// };
 
 
 
@@ -40,56 +40,56 @@ exports.transfer = async (req, res) => {
 
 
 // POST /api/wallet/transfer
-// exports.transfer = async (req, res) => {
-//   try {
-//     const senderId = req.user.id; // ✅ get sender ID from middleware
-//     const { receiverPayId, amount, note } = req.body;
+exports.transfer = async (req, res) => {
+  try {
+    const senderId = req.user.id; // ✅ get sender ID from middleware
+    const { receiverPayId, amount, note } = req.body;
 
-//     if (!receiverPayId || !amount) {
-//       return res.status(400).json({ message: "Receiver Pay ID and amount are required" });
-//     }
+    if (!receiverPayId || !amount) {
+      return res.status(400).json({ message: "Receiver Pay ID and amount are required" });
+    }
 
-//     // ✅ Find sender and receiver
-//     const sender = await User.findById(senderId);
-//     const receiver = await User.findOne({ payId: receiverPayId });
-//     console.log(sender)
+    // ✅ Find sender and receiver
+    const sender = await User.findById(senderId);
+    const receiver = await User.findOne({ payId: receiverPayId });
+    console.log(sender)
 
-//     if (!sender) return res.status(404).json({ message: "Sender not found" });
-//     if (!receiver) return res.status(404).json({ message: "Receiver not found" });
+    if (!sender) return res.status(404).json({ message: "Sender not found" });
+    if (!receiver) return res.status(404).json({ message: "Receiver not found" });
 
-//     if (sender.walletBalance < amount) {
-//       return res.status(400).json({ message: "Insufficient balance" });
-//     }
+    if (sender.walletBalance < amount) {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
 
-//     // ✅ Adjust balances
-//     sender.walletBalance -= amount;
-//     receiver.walletBalance += amount;
+    // ✅ Adjust balances
+    sender.walletBalance -= amount;
+    receiver.walletBalance += amount;
 
-//     // ✅ Create transaction object
-//     const transaction = {
-//       type: "transfer",
-//       amount,
-//       date: new Date(),
-//       from: sender.payId,
-//       to: receiver.payId,
-//       note,
-//       status: "success",
-//     };
+    // ✅ Create transaction object
+    const transaction = {
+      type: "transfer",
+      amount,
+      date: new Date(),
+      from: sender.payId,
+      to: receiver.payId,
+      note,
+      status: "success",
+    };
 
-//     // ✅ Add transaction history
-//     sender.transactions.push({ ...transaction, type: "debit" });
-//     receiver.transactions.push({ ...transaction, type: "credit" });
+    // ✅ Add transaction history
+    sender.transactions.push({ ...transaction, type: "debit" });
+    receiver.transactions.push({ ...transaction, type: "credit" });
 
-//     // ✅ Save updated users (no re-creation)
-//     await sender.save();
-//     await receiver.save();
+    // ✅ Save updated users (no re-creation)
+    await sender.save();
+    await receiver.save();
 
-//     res.status(200).json({ message: "Transfer successful" });
-//   } catch (error) {
-//     console.error("Transfer Error:", error.message);
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// };
+    res.status(200).json({ message: "Transfer successful" });
+  } catch (error) {
+    console.error("Transfer Error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 
 
 
