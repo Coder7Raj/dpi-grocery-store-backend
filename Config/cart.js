@@ -2,32 +2,31 @@ const Cart = require("../models/cart.module");
 
 exports.addCart = async (req, res) => {
   try {
-       console.log("Request body:", req.body); // ADD THIS LINE
-
-    const {  productId } = req.body;
+    const { productId } = req.body;
     const userId = req.user.id;
- console.log(userId)
+
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      cart = new Cart({ userId, items: [{ productId }] });
+      // Create a new cart with one item and default quantity (if schema has default)
+      cart = new Cart({ userId, items: [{ productId, quantity: 1 }] });
     } else {
+      // Check if product already exists in cart
       const index = cart.items.findIndex(
         (item) => item.productId.toString() === productId
       );
 
-      // if (index > -1) {
-      //   cart.items[index].quantity += quantity;
-      // } else {
-      //   cart.items.push({ productId, quantity });
-      // }
+      if (index === -1) {
+        // Product not found in cart, so add it with quantity 1
+        cart.items.push({ productId, quantity: 1 });
+      }
+      // If found, do nothing (do NOT increase quantity)
     }
 
     await cart.save();
-    res.status(200).json({ message: 'Added to cart', cart });
-
+    res.status(200).json({ message: "Added to cart", cart });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
