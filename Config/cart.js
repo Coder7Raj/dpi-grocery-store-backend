@@ -16,11 +16,11 @@ exports.addCart = async (req, res) => {
         (item) => item.productId.toString() === productId
       );
 
-      if (index > -1) {
-        cart.items[index].quantity += quantity;
-      } else {
-        cart.items.push({ productId, quantity });
-      }
+      // if (index > -1) {
+      //   cart.items[index].quantity += quantity;
+      // } else {
+      //   cart.items.push({ productId, quantity });
+      // }
     }
 
     await cart.save();
