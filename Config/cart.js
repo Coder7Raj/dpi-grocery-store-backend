@@ -4,7 +4,7 @@ exports.addCart = async (req, res) => {
   try {
        console.log("Request body:", req.body); // ADD THIS LINE
 
-    const {  productId, quantity } = req.body;
+    const {  productId } = req.body;
     const userId = req.user.id;
  console.log(userId)
     let cart = await Cart.findOne({ userId });
