@@ -80,7 +80,7 @@ exports.placeOrder = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const { orderId } = req.params;
+  const orderId = req.params.orderId.trim();
     console.log(orderId);
     console.log("fsdjflksd");
     const { status } = req.body;
