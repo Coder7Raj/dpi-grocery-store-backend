@@ -141,3 +141,19 @@ exports.getUserOrders = async (req, res) => {
       .json({ message: "Failed to fetch orders", error: error.message });
   }
 };
+
+// controllers/orderController.js
+
+
+exports.getCompletedOrders = async (req, res) => {
+  try {
+    const completedOrders = await Order.find({ status: "completed" }).populate("items.product", "title price image");
+
+    res.status(200).json({
+      message: "Completed orders fetched successfully",
+      orders: completedOrders,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
