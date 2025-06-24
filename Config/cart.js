@@ -3,32 +3,50 @@ const Cart = require("../models/cart.module");
 exports.addCart = async (req, res) => {
   try {
     const { productId } = req.body;
-    const userId = req.user.id;
+    if (!productId) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
 
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const userId = req.user.id;
     let cart = await Cart.findOne({ userId });
 
+    let productAlreadyExists = false;
+
     if (!cart) {
-      // Create a new cart with one item and default quantity (if schema has default)
+      // Create a new cart with the product
       cart = new Cart({ userId, items: [{ productId, quantity: 1 }] });
     } else {
-      // Check if product already exists in cart
+      // Check if product already exists
       const index = cart.items.findIndex(
         (item) => item.productId.toString() === productId
       );
 
       if (index === -1) {
-        // Product not found in cart, so add it with quantity 1
         cart.items.push({ productId, quantity: 1 });
+      } else {
+        productAlreadyExists = true;
       }
-      // If found, do nothing (do NOT increase quantity)
     }
 
     await cart.save();
-    res.status(200).json({ message: "Added to cart", cart });
+
+    if (productAlreadyExists) {
+      return res.status(200).json({ message: "Product already in cart", cart });
+    } else if (!cart) {
+      return res.status(400).json({ message: "Failed to add to cart" });
+    } else {
+      return res.status(200).json({ message: "Added to cart", cart });
+    }
+
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 // get cart
 exports.getCart = async (req, res) => {
