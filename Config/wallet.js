@@ -84,7 +84,19 @@ exports.transfer = async (req, res) => {
     await sender.save();
     await receiver.save();
 
-    res.status(200).json({ message: "Transfer successful" });
+    res.status(200).json({
+  message: "Transfer successful",
+  sender: {
+    payId: sender.payId,
+    newBalance: sender.walletBalance,
+  },
+  receiver: {
+    payId: receiver.payId,
+    newBalance: receiver.walletBalance,
+  },
+  transaction
+});
+
   } catch (error) {
     console.error("Transfer Error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
