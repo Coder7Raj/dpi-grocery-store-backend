@@ -78,6 +78,7 @@ exports.register = async (req, res) => {
 exports.verifyEmail = async (req, res) => {
   try {
     const token = req.params.token;
+    console.log(token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 

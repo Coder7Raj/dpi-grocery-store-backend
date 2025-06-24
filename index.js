@@ -24,7 +24,7 @@ connectDB();
 app.use(
   cors({
     origin: [
-      "https://exquisite-squirrel-4ee567.netlify.app",
+      "https://starlit-seahorse-c2a8ac.netlify.app",
       "http://localhost:5173",
       "http://localhost:5174",
     ],
