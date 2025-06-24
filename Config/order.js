@@ -157,3 +157,28 @@ exports.getCompletedOrders = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+exports.getPendingUserOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId)
+    const pendingOrders = await Order.find({ user:userId, status: 'pending' });
+console.log(pendingOrders)
+    res.status(200).json({ orders: pendingOrders });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+exports.getCompleteUserdOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const completedOrders = await Order.find({user:userId, status: 'completed' });
+
+    res.status(200).json({ orders: completedOrders });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
