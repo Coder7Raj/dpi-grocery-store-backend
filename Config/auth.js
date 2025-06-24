@@ -18,7 +18,7 @@ async function generatePayId() {
   return `PAY-${nextId}`;
 }
 
-const isProduction = process.env.NODE_ENV === "production";
+// const isProduction = process.env.NODE_ENV === "production";
 // Register
 exports.register = async (req, res) => {
   try {
@@ -89,8 +89,8 @@ exports.verifyEmail = async (req, res) => {
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
+        secure: false,
+        sameSite: "strict",
         maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
       })
       .status(200)
@@ -122,8 +122,8 @@ exports.login = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
+        secure: false,
+        sameSite: "strict",
         maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
       })
       .status(200)
@@ -146,8 +146,8 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "None" : "Lax",
+    secure: false,
+    sameSite: "strict",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
