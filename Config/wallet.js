@@ -1,7 +1,7 @@
-const User = require("../models/user.module")
+const User = require("../models/user.module");
 // POST /api/wallet/transfer
 // exports.transfer = async (req, res) => {
-  
+
 //   const { senderPayId, receiverPayId, amount, note } = req.body;
 
 //   const sender = await User.findOne({ payId: senderPayId });
@@ -34,11 +34,6 @@ const User = require("../models/user.module")
 //   res.status(200).json({ message: 'Transfer successful' });
 // };
 
-
-
-
-
-
 // POST /api/wallet/transfer
 exports.transfer = async (req, res) => {
   try {
@@ -46,16 +41,18 @@ exports.transfer = async (req, res) => {
     const { receiverPayId, amount, note } = req.body;
 
     if (!receiverPayId || !amount) {
-      return res.status(400).json({ message: "Receiver Pay ID and amount are required" });
+      return res
+        .status(400)
+        .json({ message: "Receiver Pay ID and amount are required" });
     }
 
     // ✅ Find sender and receiver
     const sender = await User.findById(senderId);
     const receiver = await User.findOne({ payId: receiverPayId });
-    console.log(sender)
 
     if (!sender) return res.status(404).json({ message: "Sender not found" });
-    if (!receiver) return res.status(404).json({ message: "Receiver not found" });
+    if (!receiver)
+      return res.status(404).json({ message: "Receiver not found" });
 
     if (sender.walletBalance < amount) {
       return res.status(400).json({ message: "Insufficient balance" });
@@ -85,26 +82,22 @@ exports.transfer = async (req, res) => {
     await receiver.save();
 
     res.status(200).json({
-  message: "Transfer successful",
-  sender: {
-    payId: sender.payId,
-    newBalance: sender.walletBalance,
-  },
-  receiver: {
-    payId: receiver.payId,
-    newBalance: receiver.walletBalance,
-  },
-  transaction
-});
-
+      message: "Transfer successful",
+      sender: {
+        payId: sender.payId,
+        newBalance: sender.walletBalance,
+      },
+      receiver: {
+        payId: receiver.payId,
+        newBalance: receiver.walletBalance,
+      },
+      transaction,
+    });
   } catch (error) {
     console.error("Transfer Error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-
-
 
 // get balance
 // exports.getBalance = async (req, res) => {
@@ -126,7 +119,6 @@ exports.getBalance = async (req, res) => {
   }
 };
 
-
 // history
 // exports.getHistory = async (req, res) => {
 //   const { payId } = req.params;
@@ -146,7 +138,6 @@ exports.getHistory = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 // added balance via coin
 
@@ -174,13 +165,12 @@ exports.useCoinToAddBalance = async (req, res) => {
     res.status(200).json({
       message: `Added ৳${balanceToAdd} to wallet using ${coinsToUse} coin(s)`,
       newBalance: user.walletBalance,
-      remainingCoins: user.coins
+      remainingCoins: user.coins,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 // buy token
 exports.useBalanceToBuyCoin = async (req, res) => {
@@ -212,10 +202,9 @@ exports.useBalanceToBuyCoin = async (req, res) => {
     res.status(200).json({
       message: `Purchased ${coinsToBuy} coin(s) for ৳${totalCost}`,
       newBalance: user.walletBalance,
-      totalCoins: user.coins
+      totalCoins: user.coins,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-

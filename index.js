@@ -9,7 +9,7 @@ const userRoute = require("./Routes/userRoutes.js");
 const updatProfile = require("./Routes/profileRoutes.js");
 const order = require("./Routes/orderRoute.js");
 const wallet = require("./Routes/walleRoute.js");
-const cart = require("./Routes/cartRoute.js")
+const cart = require("./Routes/cartRoute.js");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const cookieParser = require("cookie-parser");
@@ -23,7 +23,11 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: true, // your frontend origin
+    origin: [
+      "https://exquisite-squirrel-4ee567.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
     credentials: true,
   })
 );
@@ -36,7 +40,7 @@ app.use("/api/user", userRoute);
 app.use("/api/profile", updatProfile);
 app.use("/api/wallet", wallet);
 app.use("/api/order", order);
-app.use("/api/cart", cart)
+app.use("/api/cart", cart);
 
 // Sample route
 app.get("/", (req, res) => {
