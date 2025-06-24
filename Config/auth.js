@@ -18,6 +18,7 @@ async function generatePayId() {
   return `PAY-${nextId}`;
 }
 
+const isProduction = process.env.NODE_ENV === "production";
 // Register
 exports.register = async (req, res) => {
   try {
@@ -69,11 +70,8 @@ exports.register = async (req, res) => {
     res
       .status(201)
       .json({ message: "User registered. Please verify your email." });
-
-    console.log(newUser);
   } catch (err) {
     return res.status(500).json({ message: "Server error" });
-    console.log(err);
   }
 };
 
@@ -87,13 +85,12 @@ exports.verifyEmail = async (req, res) => {
 
     user.isVerified = true;
     await user.save();
-    console.log(user);
-    console.log(token);
+
     return res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
         maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
       })
       .status(200)
@@ -107,15 +104,10 @@ exports.verifyEmail = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-       console.log("Login request:", req.body);
 
-  const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
-    console.log(user)
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
-    console.log("Entered password:", password);
-console.log("Stored (hashed) password:", user.password);
-
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
@@ -130,8 +122,8 @@ console.log("Stored (hashed) password:", user.password);
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
         maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
       })
       .status(200)
@@ -146,7 +138,7 @@ console.log("Stored (hashed) password:", user.password);
         },
       });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message  });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
@@ -154,8 +146,8 @@ console.log("Stored (hashed) password:", user.password);
 exports.logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
