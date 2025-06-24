@@ -87,12 +87,13 @@ exports.verifyEmail = async (req, res) => {
     user.isVerified = true;
     await user.save();
 
-    return res
+    return res;
+    res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
+        secure: true, // ✅ Required for HTTPS
+        sameSite: "None", // ✅ Required for cross-origin cookies
+        maxAge: 5 * 24 * 60 * 60 * 1000,
       })
       .status(200)
       .json({ message: "Email verified successfully" });
@@ -123,9 +124,9 @@ exports.login = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge: 5 * 24 * 60 * 60 * 1000, // 5 days
+        secure: true, // ✅ Required for HTTPS
+        sameSite: "None", // ✅ Required for cross-origin cookies
+        maxAge: 5 * 24 * 60 * 60 * 1000,
       })
       .status(200)
       .json({
