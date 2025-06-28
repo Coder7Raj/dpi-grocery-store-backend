@@ -35,7 +35,7 @@ grocery-backend/
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the Repository
-git clone [https://github.com/Coder7Raj/dpi-grocery-store-backend]
+git clone [https://github.com/Coder7Raj/dpi-grocery-store-backend.git]
 
 2. Install Dependencies
 ```
